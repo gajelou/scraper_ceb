@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug index.ts (ts-node/esm)",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/index.ts",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run index.ts with npm start",
+      "type": "pwa-node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run gerarCatalogo.ts",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/gerarCatalogo.ts",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
