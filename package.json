@@ -8,10 +8,14 @@
   "dependencies": {
     "axios": "^1.16.1",
     "cheerio": "1.0.0-rc.12",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "pdfkit": "^0.18.0",
     "playwright": "^1.55.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
     "@types/pdfkit": "^0.17.6",
     "ts-node": "^10.9.2",
