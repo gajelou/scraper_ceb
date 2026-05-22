@@ -1,6 +1,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import fs from "fs";
+
 import { gerarCatalogoPDF } from "./gerarCatalogo.js";
 import { Produto } from "./types.js";
 import { nomeArquivoSeguro } from "./utils.js";
@@ -31,7 +32,7 @@ async function getComRetry(url: string, tentativas = 5) {
         timeout: 60000,
         headers: {
           "User-Agent": "Mozilla/5.0",
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept": "text/html",
           "Referer": BASE
         }
       });
@@ -53,22 +54,28 @@ async function buscarImagemNoProduto(link: string): Promise<string> {
     const $ = cheerio.load(data);
 
     const img =
-      $("meta[property='og:image']").attr("content") ||
-      $(".thumbnails img").first().attr("src") ||
-      $(".product-info img").first().attr("src") ||
-      $("img")
-        .filter((_, el) => {
-          const src = $(el).attr("src") || "";
-          return src.includes("cache") || src.includes("image");
-        })
-        .first()
-        .attr("src") ||
+      $("img#main-image").attr("data-src") ||
+      $("img#main-image").attr("src") ||
+      $("#main-image").attr("data-src") ||
+      $("#main-image").attr("src") ||
       "";
 
     return montarUrl(img);
   } catch {
     return "";
   }
+}
+
+function limparNomeProduto(nome: string) {
+  return nome
+    .replace(/camargo\s*e\s*barros/gi, "")
+    .replace(/camargo\s*&\s*barros/gi, "")
+    .replace(/entregamos.*?transportadora/gi, "")
+    .replace(/entregamos na região do brás próximo a loja/gi, "")
+    .replace(/ou solicitamos coleta via transportadora/gi, "")
+    .replace(/produto esgotado/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 async function buscarPagina(pagina: number): Promise<Produto[]> {
@@ -79,14 +86,15 @@ async function buscarPagina(pagina: number): Promise<Produto[]> {
   const produtos: Produto[] = [];
 
   $("a").each((_, el) => {
-    const texto = limparTexto($(el).text());
+    const textoOriginal = limparTexto($(el).text());
+    const texto = limparNomeProduto(textoOriginal);
     const href = $(el).attr("href") || "";
 
-    if (!texto.includes("Cód.:")) return;
-    if (!texto.includes("R$")) return;
+    if (!textoOriginal.includes("Cód.:")) return;
+    if (!textoOriginal.includes("R$")) return;
 
-    const codigoMatch = texto.match(/Cód\.:\s*([A-Z0-9-]+)/i);
-    const precoMatch = texto.match(/R\$\s*[\d.,]+/i);
+    const codigoMatch = textoOriginal.match(/Cód\.:\s*([A-Z0-9-]+)/i);
+    const precoMatch = textoOriginal.match(/R\$\s*[\d.,]+/i);
 
     if (!codigoMatch || !precoMatch) return;
 
@@ -125,7 +133,7 @@ async function baixarImagemComRetry(url: string, tentativas = 5) {
         headers: {
           "User-Agent": "Mozilla/5.0",
           "Referer": BASE,
-          "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
+          "Accept": "image/*,*/*"
         }
       });
     } catch {
@@ -169,8 +177,7 @@ async function baixarImagens(produtos: Produto[]) {
   fs.writeFileSync("imagens-erros.csv", erros.join("\n"), "utf-8");
 }
 
-
-async function main() {   
+async function main() {
   const mapa = new Map<string, Produto>();
 
   for (let pagina = 1; pagina <= 57; pagina++) {
@@ -196,7 +203,7 @@ async function main() {
 
   const todos = [...mapa.values()];
 
-  console.log("Buscando imagens nas páginas dos produtos...");
+  console.log("Buscando imagens reais dos produtos...");
 
   for (const produto of todos) {
     produto.imagem = await buscarImagemNoProduto(produto.link);
@@ -219,11 +226,11 @@ async function main() {
 
   await baixarImagens(todos);
 
+  gerarCatalogoPDF(todos, 30);
+
   console.log("FINALIZADO");
   console.log("Total:", todos.length);
-  
-  gerarCatalogoPDF(todos, 30); 
-  console.log("Catálogo PDF gerado com 30% de ágio sobre o preço de atacado.");
+  console.log("Catálogo PDF gerado com 30% de ágio.");
 }
 
 main();
