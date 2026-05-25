@@ -275,7 +275,10 @@ function limparCatalogosAntigos() {
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log("Scraper automático agendado para 06:00 e 18:00.");
+app.get("/", (req, res) => {
+  res.send("API Scraper CEB online");
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
