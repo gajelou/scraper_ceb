@@ -105,7 +105,7 @@ app.post("/scraper", async (req, res) => {
 app.post("/catalogo", async (req, res) => {
   try {
     const agio = agioPercentual;
-
+    const mostrarPrecos = req.body.mostrarPrecos !== false;
     if (Number.isNaN(agio) || agio < 0) {
       return res.status(400).json({
         erro: "Ágio inválido."
@@ -120,7 +120,7 @@ app.post("/catalogo", async (req, res) => {
       });
     }
 
-    const pdf = await gerarCatalogoPDF(produtos, agio);
+    const pdf = await gerarCatalogoPDF(produtos, agio, mostrarPrecos);
 
     ultimoCatalogoGerado = pdf.nomeArquivo;
     limparCatalogosAntigos();

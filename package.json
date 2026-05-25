@@ -3,7 +3,7 @@
   "scripts": {
     "build": "tsc",
     "server": "npm run build && node dist/server.js",
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run build && node dist/server.js",
     "dev": "npx ts-node/esm index.ts",
     "gerar-catalogo": "npx ts-node/esm gerarCatalogo.ts"
   },

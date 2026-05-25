@@ -11,7 +11,8 @@ const PASTA_IMAGENS = path.resolve(process.cwd(), "imagens");
 
 export function gerarCatalogoPDF(
   produtos: Produto[],
-  agioPercentual: number
+  agioPercentual: number,
+  mostrarPrecos = true
 ): Promise<{
   nomeArquivo: string;
   caminhoPDF: string;
@@ -149,13 +150,15 @@ export function gerarCatalogoPDF(
           align: "center"
         });
 
-      doc
-        .fontSize(18)
-        .fillColor("green")
-        .text(formatarPreco(precoVenda), x + 10, y + 198, {
-          width: larguraCard - 20,
-          align: "center"
-        });
+      if (mostrarPrecos) {
+        doc
+          .fontSize(18)
+          .fillColor("green")
+          .text(formatarPreco(precoVenda), x + 10, y + 198, {
+            width: larguraCard - 20,
+            align: "center"
+          });
+}
 
       doc.fillColor("black");
     });
