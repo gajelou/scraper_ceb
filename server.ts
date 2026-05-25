@@ -11,8 +11,16 @@ import { gerarCatalogoPDF } from "./gerarCatalogo.js";
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://gajelou.github.io"
+  ],
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
 app.use(express.json());
+
 
 let agioPercentual = 30;
 let ultimoCatalogoGerado = "";
