@@ -5,7 +5,7 @@ import fs from "fs";
 import { Produto } from "./types.js";
 import { nomeArquivoSeguro } from "./utils.js";
 
-const BASE = "https://camargoebarros.com.br";
+const BASE = "https://camargoebarros.futurasistemas.com.br";
 const CATEGORIAS = [
   `${BASE}/57-VARIEDADES/66-ACESSORIOS-ELETRICOS`,
   `${BASE}/57-VARIEDADES/65-FERRAMENTAS`,
