@@ -1,12 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "server": "npm run build && node dist/server.js",
-    "start": "npm run build && node dist/server.js",
-    "dev": "npx ts-node/esm index.ts",
-    "gerar-catalogo": "npx ts-node/esm gerarCatalogo.ts"
-  },
+  "build": "tsc",
+  "start": "node dist/server.js"
+},
   "dependencies": {
     "axios": "^1.16.1",
     "cheerio": "1.0.0-rc.12",
