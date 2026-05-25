@@ -1,7 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm index.ts",
+    "build": "tsc",
+    "server": "npm run build && node dist/server.js",
+    "start": "npm run build && node dist/index.js",
     "dev": "npx ts-node/esm index.ts",
     "gerar-catalogo": "npx ts-node/esm gerarCatalogo.ts"
   },
@@ -10,6 +12,7 @@
     "cheerio": "1.0.0-rc.12",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "node-cron": "^4.2.1",
     "pdfkit": "^0.18.0",
     "playwright": "^1.55.0"
   },
@@ -17,8 +20,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
+    "@types/node-cron": "^3.0.11",
     "@types/pdfkit": "^0.17.6",
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   }
 }

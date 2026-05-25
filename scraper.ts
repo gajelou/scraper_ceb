@@ -6,7 +6,16 @@ import { Produto } from "./types.js";
 import { nomeArquivoSeguro } from "./utils.js";
 
 const BASE = "https://camargoebarros.futurasistemas.com.br";
-const CATEGORIA = `${BASE}/57-VARIEDADES/65-FERRAMENTAS`;
+const CATEGORIAS = [
+  `${BASE}/57-VARIEDADES/66-ACESSORIOS-ELETRICOS`,
+  `${BASE}/57-VARIEDADES/65-FERRAMENTAS`,
+  `${BASE}/57-VARIEDADES/64-UTILIDADES-DOMESTICAS`,
+  `${BASE}/57-VARIEDADES/61-RELOGIOS-E-DESPERTADORES`,
+  `${BASE}/57-VARIEDADES/60-CABOS-E-CARREGADORES`,
+  `${BASE}/57-VARIEDADES/59-EXTENCOES-FILTRO-E-LINHAS`,
+  `${BASE}/57-VARIEDADES/58-VARIEDADES`,
+  `${BASE}/55-PILHAS-E-BATERIAS/56-PILHAS-E-BATERIAS`
+];
 
 function limparTexto(texto: string) {
   return texto.replace(/\s+/g, " ").trim();
@@ -77,8 +86,8 @@ function limparNomeProduto(nome: string) {
     .trim();
 }
 
-async function buscarPagina(pagina: number): Promise<Produto[]> {
-  const url = `${CATEGORIA}?page=${pagina}`;
+async function buscarPagina(categoria: string, pagina: number): Promise<Produto[]> {
+  const url = `${categoria}?page=${pagina}`;
 
   const { data } = await getComRetry(url);
   const $ = cheerio.load(data);
@@ -192,25 +201,29 @@ function salvarArquivosProdutos(produtos: Produto[]) {
 export async function executarScraper() {
   const mapa = new Map<string, Produto>();
 
-  for (let pagina = 1; pagina <= 57; pagina++) {
-    let produtos: Produto[] = [];
+  for (const categoria of CATEGORIAS) {
+    console.log(`Buscando categoria: ${categoria}`);
 
-    try {
-      produtos = await buscarPagina(pagina);
-    } catch {
-      console.log(`Erro ao buscar página ${pagina}, pulando...`);
-      continue;
+    for (let pagina = 1; pagina <= 57; pagina++) {
+      let produtos: Produto[] = [];
+
+      try {
+        produtos = await buscarPagina(categoria, pagina);
+      } catch {
+        console.log(`Erro na categoria ${categoria}, página ${pagina}`);
+        continue;
+      }
+
+      console.log(`Categoria: ${categoria} | Página ${pagina}: ${produtos.length} produtos`);
+
+      if (produtos.length === 0) break;
+
+      for (const produto of produtos) {
+        mapa.set(produto.codigo, produto);
+      }
+
+      await delay(1000);
     }
-
-    console.log(`Página ${pagina}: ${produtos.length} produtos`);
-
-    if (produtos.length === 0) break;
-
-    for (const produto of produtos) {
-      mapa.set(produto.codigo, produto);
-    }
-
-    await delay(1000);
   }
 
   const todos = [...mapa.values()];
@@ -224,7 +237,6 @@ export async function executarScraper() {
   }
 
   salvarArquivosProdutos(todos);
-
   await baixarImagens(todos);
 
   return todos;
