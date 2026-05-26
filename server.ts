@@ -134,11 +134,14 @@ app.post("/catalogo", async (req, res) => {
       arquivo: pdf.nomeArquivo,
       download: `/catalogo/download/${pdf.nomeArquivo}`
     });
-  } catch {
-    res.status(500).json({
-      erro: "Erro ao gerar catálogo. Verifique se produtos.json existe."
-    });
-  }
+  } catch (error) {
+  console.error("ERRO AO GERAR CATÁLOGO:", error);
+
+  res.status(500).json({
+    erro: "Erro ao gerar catálogo.",
+    detalhe: error instanceof Error ? error.message : String(error)
+  });
+}
 });
 
 app.post("/scraper/catalogo", async (req, res) => {
