@@ -12,14 +12,8 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://gajelou.github.io"
-  ],
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"]
+  origin: "*"
 }));
-app.options("*", cors());
 app.use(express.json());
 
 
