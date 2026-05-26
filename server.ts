@@ -261,13 +261,13 @@ function limparCatalogosAntigos() {
       })
       .sort((a, b) => b.criadoEm - a.criadoEm);
 
-    if (arquivos.length <= 5) {
+    if (arquivos.length <= 3) {
       return;
     }
 
     console.log(`Encontrados ${arquivos.length} catálogos. Limpando arquivos antigos...`);
 
-    const arquivosParaExcluir = arquivos.slice(5);
+    const arquivosParaExcluir = arquivos.slice(3);
 
     for (const arquivo of arquivosParaExcluir) {
       try {
