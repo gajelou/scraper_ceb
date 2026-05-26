@@ -167,6 +167,14 @@ async function baixarImagens(produtos: Produto[]) {
       continue;
     }
 
+    const caminho = nomeArquivoSeguro(produto.codigo, produto.imagem);
+
+    // NÃO baixa novamente se já existir
+    if (fs.existsSync(caminho)) {
+      console.log(`Imagem já existe: ${produto.codigo}`);
+      continue;
+    }
+
     try {
       const response = await baixarImagemComRetry(produto.imagem);
       const caminho = nomeArquivoSeguro(produto.codigo, produto.imagem);
