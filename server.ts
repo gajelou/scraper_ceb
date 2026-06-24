@@ -156,6 +156,21 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/produtos", (req, res) => {
+  const produtosPath = path.resolve(
+    process.cwd(),
+    "produtos.json"
+  );
+
+  if (!fs.existsSync(produtosPath)) {
+    return res.status(404).json({
+      erro: "Arquivo produtos.json não encontrado."
+    });
+  }
+
+  res.sendFile(produtosPath);
+});
+
 app.get("/health", (req, res) => {
   res.json({
     status: "ok"
